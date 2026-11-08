@@ -1,20 +1,22 @@
-# 3D格子角色應用
+# 3D格子角色：資料夾免安裝版 v1.1
 
-開啟角色JSON，保留原角色頁的面部／頭部偵測、手動四肢與畫面設定。左上開啟角色，左鍵點角色顯示設定，右鍵旋轉、滾輪縮放。
+使用官方Electron執行檔及其原始DLL等檔案，不重製、不改名、不改圖標、不用ASAR、不製作單檔自解壓EXE。GitHub Actions複製runtime後驗證electron.exe的SHA256與原檔一致，並列出其簽章狀態。這能保留官方檔案的原有簽章，但不能保證每台Windows的智慧型應用程式控制都放行。
 
-## GitHub自動產生免安裝EXE
-1. 將本資料夾內所有檔案（包含.github/workflows/build.yml）上傳至GitHub儲存庫根目錄。
-2. 在Actions選擇Build portable Windows app → Run workflow。
-3. 完成後在該次執行的Artifacts下載VoxelCharacter-Windows-portable。
-4. 解壓縮後執行EXE，無須安裝。未簽章EXE可能顯示Windows安全提示，請自行確認來源。
+## 上傳GitHub
+把本資料夾裡的檔案覆蓋至儲存庫根目錄，包含.github/workflows/build.yml。提交至main即開始建置；也可Actions → Build portable Windows app → Run workflow。
 
-也可推送v開頭tag觸發建置。這份交付未替你上傳GitHub，也尚未在Windows實際建置EXE；建置結果以Actions為準。
+完成後在該次執行下方Artifacts下載VoxelCharacter-Windows-folder。完整解壓縮，執行electron.exe；不要只拿出EXE，也不要在ZIP裡直接執行。其他DLL、resources、locales等資料夾需保持完整。
 
-## 背景運作
-Electron關閉背景計時器與renderer節流，並請求防止應用休眠；桌面模式不因visibilitychange自動停止鏡頭。這能降低失焦、被遮住及最小化造成的降速；不能保證鎖屏、作業系統休眠或GPU資源不足時仍維持固定FPS。一般瀏覽器頁仍保留背景停止鏡頭行為。
+## 更換網頁
+關閉應用程式後，替換解壓縮資料夾內resources/app/index.html，再執行electron.exe。
+保留resources/app/main.cjs及package.json。換入其他網頁時，其需要的JS、圖片等資源也需放在正確相對路徑。
 
-網頁index.html也能單獨使用；瀏覽器版仍受瀏覽器背景節流規則限制。鏡頭辨識首次需網路下載MediaPipe；本包未將辨識模型離線內嵌。JSON只有本機讀取。
+## 角色與偵測
+左上開啟角色JSON；左鍵點角色開設定，右鍵旋轉、滾輪縮放。保留面部及頭部偵測、手動四肢、透明背景及畫面設定。鏡頭辨識首次需要網路下載模型。
 
-本機開發：npm install，再npm start。建置：npm run dist。
+背景節流關閉與防止應用休眠設定保留。這不能保證鎖屏、系統休眠或GPU資源不足時仍有固定FPS。
+
+本地開發：npm install → npm start。Windows建置：npm run dist。
+本包是GitHub建置原始碼，尚未在Windows實際建置或確認SAC放行。
 
 © 2026–2030 anshaer.com
