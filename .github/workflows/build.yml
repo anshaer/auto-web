@@ -2,6 +2,7 @@ name: Build portable Windows app
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     tags: ['v*']
 permissions:
   contents: read
@@ -15,10 +16,15 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run dist
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Verify official runtime remains unchanged
+        shell: pwsh
+        run: |
+          $original = (Get-FileHash node_modules/electron/dist/electron.exe -Algorithm SHA256).Hash
+          $copied = (Get-FileHash dist/VoxelCharacter/electron.exe -Algorithm SHA256).Hash
+          if ($original -ne $copied) { throw 'Electron executable changed' }
+          Get-AuthenticodeSignature dist/VoxelCharacter/electron.exe | Format-List Status,StatusMessage,SignerCertificate
       - uses: actions/upload-artifact@v4
         with:
-          name: VoxelCharacter-Windows-portable
-          path: dist/*.exe
+          name: VoxelCharacter-Windows-folder
+          path: dist/VoxelCharacter/
           if-no-files-found: error
