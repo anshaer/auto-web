@@ -31,3 +31,20 @@
 - macOS補入攝影機用途說明，並重新作本機ad-hoc簽章，沒有Apple Developer ID簽章或公證，因此不保證Gatekeeper放行。首次使用鏡頭需允許權限。
 - macOS更換頁面：Electron.app → 顯示套件內容 → Contents/Resources/app/index.html。修改套件內容會影響資源簽章，建議由GitHub重新建置整包。
 - 背景防節流設定維持。尚未在Windows/macOS實機測試透明顯示、鏡頭及Dock／工作列圖示；Actions實際建置結果以執行紀錄為準。
+
+## Mac簽章修正
+複製runtime時明確保留符號連結的原始相對目標（verbatimSymlinks:true），避免Framework內部連結被改寫成指向建置來源的絕對路徑。否則codesign可能回報unsealed contents present in the root directory of an embedded framework。攝影機用途欄位已存在的Add提示會由Set處理，不是這次中斷原因。Windows封裝方式不變。已測試多層相對連結複製及來源移除後仍可解析；Mac codesign仍須由GitHub Mac runner驗證。
+
+## v1.3 全身動捕同步
+應用頁同步製作器v16的軀幹／四肢／手肘／膝蓋追蹤，面部表情與頭部獨立維持；設定中「四肢」提供手動彎曲XYZ。未指定偵測模式的舊JSON預設全身，已有明確模式則依檔案還原。鏡頭需手動啟動；首次需網路下載面部與身體模型。
+
+已同步髖部不可見時仍求解手臂、各肢獨立可見度與影像座標退路。鏡頭顯示綠色骨架，狀態列列出有效四肢；VMC仍僅面部／頭部，不含身體骨骼。透明視窗、JSON載入、官方Windows執行檔、Mac符號連結保留、防背景節流與立方體圖示均保留。
+
+已有Windows資料夾應用者，可關閉程式後只替換resources/app/index.html；從本專案根目錄取index.html。若透過GitHub上傳，覆蓋根目錄檔案後會自動產生三平台新包。Mac因套件簽章，請重新建置下載整包。
+
+此版已做HTML腳本語法及同步檢查；動捕核心沿用已通過模擬測試的製作器v16。尚未Windows/Mac真人全身追蹤與FPS實測。
+
+## v1.4 辨識資訊面板
+鏡頭影像改為狀態面板，列出左右眼、嘴型、左右眉、頭部角度與軀幹／四肢辨識狀態。鏡頭仍在背景供辨識使用，原影像與骨架疊圖不再顯示。逾時不保留有效標記；手動模式與未啟用全身分開顯示。
+Windows舊資料夾版完全關閉後，可替換resources/app/index.html；這次不需換EXE。Mac需用本包重新執行GitHub Actions建置，再下載整包。此ZIP為GitHub建置原始碼，不是已編譯的EXE／app。
+透明視窗、JSON載入、官方執行檔與防背景節流設定維持。程式語法及模擬核心測試通過；未做本次真人鏡頭／各平台實機驗證。
